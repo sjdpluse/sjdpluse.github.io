@@ -182,8 +182,8 @@ const Home = () => {
                 <p className="text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light"
                   data-aos="fade-up"
                   data-aos-delay="1000">
-                  Developing innovative, practical, and user-centered digital solutions — from IT training
-                  and database systems to graphic design, websites, and intelligent tools.
+                  Crafting innovative, practical, and user-focused digital solutions 
+                  spanning IT training, database systems, graphic design, websites, and intelligent tools.
                 </p>
 
                 {/* Tech Stack */}
