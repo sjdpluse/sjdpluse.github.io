@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, memo } from "react"
 import { Github, Linkedin, Mail, ExternalLink, Instagram, Sparkles } from "lucide-react"
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
@@ -98,9 +99,6 @@ const SOCIAL_LINKS = [
   { icon: Instagram, link: "https://www.instagram.com/thedorcci?utm_source=qr" }
 ];
 
-// GIF fallback برای مواقعی که Lottie کار نمی‌کند
-const FALLBACK_GIF_URL = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExa2U4a3FtN3lkOTNlNGR2aDYwaGxjaW1mcHUyOTVvcjUxYWV3M2E2NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26tn33aiTi1jkl6H6/giphy.gif";
-
 const Home = () => {
   const [text, setText] = useState("")
   const [isTyping, setIsTyping] = useState(true)
@@ -108,8 +106,6 @@ const Home = () => {
   const [charIndex, setCharIndex] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
-  const [lottieError, setLottieError] = useState(false)
-  const [showGif, setShowGif] = useState(false)
 
   // Optimize AOS initialization
   useEffect(() => {
@@ -160,10 +156,21 @@ const Home = () => {
     return () => clearTimeout(timeout);
   }, [handleTyping]);
 
-  // تابع برای هندل خطای Lottie
-  const handleLottieError = () => {
-    setLottieError(true);
-    setShowGif(true);
+  // Lottie configuration
+  const lottieOptions = {
+    src: "https://lottie.host/58753882-bb6a-49f5-a2c0-950eda1e135a/NLbpVqGegK.lottie",
+    loop: true,
+    autoplay: true,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+      progressiveLoad: true,
+    },
+    style: { width: "100%", height: "100%" },
+    className: `w-full h-full transition-all duration-500 ${
+      isHovering 
+        ? "scale-[130%] sm:scale-[150%] md:scale-[145%] lg:scale-[140%] rotate-1" 
+        : "scale-[125%] sm:scale-[140%] md:scale-[135%] lg:scale-[130%]"
+    }`
   };
 
   return (
@@ -218,7 +225,7 @@ const Home = () => {
               </div>
             </div>
 
-            {/* Right Column - Animation با Fallback */}
+            {/* Right Column - Optimized Lottie Animation */}
             <div className="w-full lg:w-1/2 h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] xl:h-[750px] relative flex items-center justify-center order-1 lg:order-2"
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
@@ -233,45 +240,7 @@ const Home = () => {
                 <div className={`relative lg:left-8 xl:left-12 z-10 w-full h-full opacity-90 transform transition-transform duration-500 ${
                   isHovering ? "scale-105" : "scale-100"
                 }`}>
-                  {/* Fallback GIF وقتی Lottie کار نمی‌کند */}
-                  {showGif ? (
-                    <img 
-                      src={FALLBACK_GIF_URL}
-                      alt="Creative Animation"
-                      className={`w-full h-full object-contain transition-all duration-500 ${
-                        isHovering 
-                          ? "scale-[130%] sm:scale-[150%] md:scale-[145%] lg:scale-[140%] rotate-1" 
-                          : "scale-[125%] sm:scale-[140%] md:scale-[135%] lg:scale-[130%]"
-                      }`}
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        // اگر GIF هم لود نشد، یک placeholder نمایش بده
-                        e.target.parentElement.innerHTML = `
-                          <div class="w-full h-full flex items-center justify-center">
-                            <div class="text-center">
-                              <div class="text-6xl mb-4">🎨</div>
-                              <p class="text-gray-400 text-sm">Creative Design</p>
-                            </div>
-                          </div>
-                        `;
-                      }}
-                    />
-                  ) : (
-                    // Lottie Animation (اختیاری - اگر می‌خواهید حذف شود)
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-6xl mb-4 animate-pulse">✨</div>
-                        <p className="text-gray-400 text-sm">Loading Animation...</p>
-                        <button 
-                          onClick={() => setShowGif(true)}
-                          className="mt-4 px-4 py-2 text-xs bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-lg hover:opacity-90 transition-opacity"
-                        >
-                          Load GIF Instead
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  <DotLottieReact {...lottieOptions} />
                 </div>
 
                 <div className={`absolute inset-0 pointer-events-none transition-all duration-700 ${
