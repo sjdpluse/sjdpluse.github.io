@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, memo } from "react"
 import { Github, Linkedin, Mail, ExternalLink, Instagram, Sparkles } from "lucide-react"
-import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import codingGif from '../assets/images/coding.gif';
 
 // Memoized Components
 const StatusBadge = memo(() => (
@@ -80,17 +80,19 @@ const PAUSE_DURATION = 2200;
 
 const WORDS = [
   "Professional Graphic Designer",
+  "Business & Operations Manager",
+  "Computer Science Learner",
   "Innovative Digital Creator",
   "Problem-Solving Leader"
 ];
 
 const TECH_STACK = [
-  "Graphic Design (Ps, Ai)", 
-  "Photography & Videography", 
-  "Video Editing (Pr Pro, Ae)", 
-  "Content Production SEO",
-  "Database & Automation",
-  "AI Tools", "Telegram Bots"
+  "Ai", "Database Development",
+  "Ps & AI", "Photo & Video Editing",
+  "CorelDRAW & 3D Design", 
+  "MS Office", "Telegram Bots",
+  "CS50 Fundamentals",
+  "Digital Marketing"
   
 ];
 const SOCIAL_LINKS = [
@@ -155,27 +157,10 @@ const Home = () => {
     return () => clearTimeout(timeout);
   }, [handleTyping]);
 
-  // Lottie configuration
-  const lottieOptions = {
-    src: "https://lottie.host/58753882-bb6a-49f5-a2c0-950eda1e135a/NLbpVqGegK.lottie",
-    loop: true,
-    autoplay: true,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-      progressiveLoad: true,
-    },
-    style: { width: "100%", height: "100%" },
-    className: `w-full h-full transition-all duration-500 ${
-      isHovering 
-        ? "scale-[180%] sm:scale-[160%] md:scale-[150%] lg:scale-[145%] rotate-2" 
-        : "scale-[175%] sm:scale-[155%] md:scale-[145%] lg:scale-[140%]"
-    }`
-  };
-
   return (
-    <div className="min-h-screen bg-[#030014] overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] " id="Home">
+    <div className="min-h-screen bg-[#030014] overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] pt-20 lg:pt-0" id="Home">
       <div className={`relative z-10 transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`}>
-        <div className="container mx-auto  min-h-screen ">
+        <div className="container mx-auto min-h-screen">
           <div className="flex flex-col lg:flex-row items-center justify-center h-screen md:justify-between gap-0 sm:gap-12 lg:gap-20">
             {/* Left Column */}
             <div className="w-full lg:w-1/2 space-y-6 sm:space-y-8 text-left lg:text-left order-1 lg:order-1 lg:mt-0"
@@ -197,9 +182,8 @@ const Home = () => {
                 <p className="text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light"
                   data-aos="fade-up"
                   data-aos-delay="1000">
-                  Creating professional visual content for educational institutions,
-                  academic events, and digital media — including graphic design,
-                  photography, videography, and creative video production.
+                  Developing innovative, practical, and user-centered digital solutions — from IT training
+                  and database systems to graphic design, websites, and intelligent tools.
                 </p>
 
                 {/* Tech Stack */}
@@ -239,7 +223,11 @@ const Home = () => {
                 <div className={`relative lg:left-12 z-10 w-full opacity-90 transform transition-transform duration-500 ${
                   isHovering ? "scale-105" : "scale-100"
                 }`}>
-                  <DotLottieReact {...lottieOptions} />
+                  <img
+                    src={codingGif}
+                    alt="Coding animation"
+                    className="w-full h-full object-contain rounded-2xl"
+                  />
                 </div>
 
                 <div className={`absolute inset-0 pointer-events-none transition-all duration-700 ${
