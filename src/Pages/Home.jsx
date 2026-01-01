@@ -25,14 +25,14 @@ const MainTitle = memo(() => (
       <span className="relative inline-block">
         <span className="absolute -inset-2 bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-20"></span>
         <span className="relative bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
-          Vibe
+          Visual Content & 
         </span>
       </span>
       <br />
       <span className="relative inline-block mt-2">
         <span className="absolute -inset-2 bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-20"></span>
         <span className="relative bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent">
-          Coder
+          Multimedia Specialist
         </span>
       </span>
     </h1>
@@ -182,8 +182,9 @@ const Home = () => {
                 <p className="text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light"
                   data-aos="fade-up"
                   data-aos-delay="1000">
-                  Developing innovative, practical, and user-centered digital solutions — from IT training
-                  and database systems to graphic design, websites, and intelligent tools.
+                  Creating professional visual content for educational institutions,
+                  academic events, and digital media — including graphic design,
+                  photography, videography, and creative video production.
                 </p>
 
                 {/* Tech Stack */}
