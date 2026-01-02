@@ -217,14 +217,19 @@ const AboutPage = () => {
               data-aos="fade-right"
               data-aos-duration="1500"
             >
-             I am a Visual Content and Multimedia Specialist with a strong background
-            in graphic design, photography, and video production, specializing in
-            content creation for educational institutions, academic events, and
-            digital platforms.
-            Alongside my creative expertise, I bring technical and managerial skills
-            that support efficient digital workflows, content strategy, and
-            institutional branding. I am fluent in English and Dari/Farsi and
-            experienced in working within academic and professional environments.
+             I am a Visual Content and Multimedia Specialist with a strong foundation in
+            graphic design, photography, and video production, specializing in creating
+            high-quality visual content for educational institutions, academic events,
+            and digital platforms.
+            
+            In addition to my creative expertise, I have achieved significant results in
+            applied Artificial Intelligence, Prompt Engineering, and Vibe Coding, using
+            AI-driven workflows to enhance creativity, accelerate production, and optimize
+            digital processes. I combine technical, creative, and managerial skills to
+            build efficient content systems, strengthen institutional branding, and deliver
+            scalable, future-ready solutions. I am fluent in English and Dari/Farsi and
+            experienced in professional and academic environments.
+
 
             </p>
 
