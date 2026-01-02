@@ -217,7 +217,15 @@ const AboutPage = () => {
               data-aos="fade-right"
               data-aos-duration="1500"
             >
-             Dynamic and results-driven professional with a diverse background in Computer Science, Graphic Design, IT Training, and Business Management. Demonstrates a proven ability to lead teams, develop innovative digital solutions, and drive operational efficiency across technical and managerial domains. Experienced in teaching, creative design, and implementing impactful IT strategies. Bilingual in English and Dari/Farsi, with exceptional communication, leadership, and problem-solving skills.
+             I am a Visual Content and Multimedia Specialist with a strong background
+            in graphic design, photography, and video production, specializing in
+            content creation for educational institutions, academic events, and
+            digital platforms.
+            Alongside my creative expertise, I bring technical and managerial skills
+            that support efficient digital workflows, content strategy, and
+            institutional branding. I am fluent in English and Dari/Farsi and
+            experienced in working within academic and professional environments.
+
             </p>
 
                {/* Quote Section */}
