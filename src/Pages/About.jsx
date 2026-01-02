@@ -1,8 +1,7 @@
-import React, { useEffect, memo, useMemo, useState, lazy, Suspense } from "react"
-import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck, Loader2 } from "lucide-react"
+import React, { useEffect, memo, useMemo } from "react"
+import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck } from "lucide-react"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-import { supabase } from "../supabaseClient"; // اتصال به سوپابیس
 
 // Memoized Components
 const Header = memo(() => (
@@ -113,8 +112,6 @@ const StatCard = memo(({ icon: Icon, color, value, label, description, animation
   </div>
 ));
 
-const ImpactfulPeopleSlider = lazy(() => import('../components/ImpactfulPeopleSlider'));
-
 const AboutPage = () => {
   // Memoized calculations
   const { totalProjects, totalCertificates, YearExperience } = useMemo(() => {
@@ -217,7 +214,7 @@ const AboutPage = () => {
               data-aos="fade-right"
               data-aos-duration="1500"
             >
-            I am a Visual Content and Multimedia Specialist with a strong background
+             I am a Visual Content and Multimedia Specialist with a strong background
             in graphic design, photography, and video production, specializing in
             content creation for educational institutions, academic events, and
             digital platforms.
@@ -225,6 +222,9 @@ const AboutPage = () => {
             that support efficient digital workflows, content strategy, and
             institutional branding. I am fluent in English and Dari/Farsi and
             experienced in working within academic and professional environments.
+
+            </p>
+
                {/* Quote Section */}
       <div 
         className="relative bg-gradient-to-br from-[#6366f1]/5 via-transparent to-[#a855f7]/5 border border-gradient-to-r border-[#6366f1]/30 rounded-2xl p-4 my-6 backdrop-blur-md shadow-2xl overflow-hidden"
@@ -248,7 +248,7 @@ const AboutPage = () => {
       </div>
 
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
-              <a href="https://drive.google.com/drive/folders/1sXOjRPlQOK6IGUC-6BpLXFUO6j-g2BFG?dmr=1&ec=wgc-drive-hero-goto" className="w-full lg:w-auto">
+              <a href="https://drive.google.com/drive/folders/1BOm51Grsabb3zj6Xk27K-iRwI1zITcpo" className="w-full lg:w-auto">
               <button 
                 data-aos="fade-up"
                 data-aos-duration="800"
@@ -272,10 +272,6 @@ const AboutPage = () => {
           <ProfileImage />
         </div>
 
-        <Suspense fallback={<div className="flex justify-center items-center h-64 mt-16"><Loader2 className="w-8 h-8 text-indigo-400 animate-spin" /></div>}>
-          <ImpactfulPeopleSlider />
-        </Suspense>
-
         <a href="#Portofolio">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 cursor-pointer">
             {statsData.map((stat) => (
@@ -285,7 +281,7 @@ const AboutPage = () => {
         </a>
       </div>
 
-      <style>{`
+      <style jsx>{`
         @keyframes float {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-20px); }
@@ -301,56 +297,6 @@ const AboutPage = () => {
         }
         .animate-spin-slower {
           animation: spin-slower 8s linear infinite;
-        }
-        @keyframes blurry-in {
-          from {
-            filter: blur(5px);
-            opacity: 0;
-            transform: translateX(20px);
-          }
-          to {
-            filter: blur(0);
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        .animate-blurry-in {
-          animation: blurry-in 0.7s ease-out forwards;
-        }
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-in-out forwards;
-        }
-        @keyframes scroll-up {
-          from { transform: translateY(0); }
-          to { transform: translateY(-50%); }
-        }
-        .animate-scroll-up {
-          animation: scroll-up linear infinite;
-        }
-        @keyframes scroll-down {
-          from { transform: translateY(-50%); }
-          to { transform: translateY(0); }
-        }
-        .animate-scroll-down {
-          animation: scroll-down linear infinite;
-        }
-        .custom-horizontal-scrollbar::-webkit-scrollbar {
-            height: 6px;
-        }
-        .custom-horizontal-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
-        }
-        .custom-horizontal-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(99, 102, 241, 0.5);
-            border-radius: 6px;
-        }
-        .custom-horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(99, 102, 241, 0.7);
         }
       `}</style>
     </div>
