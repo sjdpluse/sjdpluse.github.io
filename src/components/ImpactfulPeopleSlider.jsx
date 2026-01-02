@@ -65,7 +65,7 @@ const ProjectCard = memo(({ item, onClick }) => {
 
         {/* Play Icon for Video */}
         {isVideo && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 opacity-0 group-hover:opacity-100 transition-all duration-500 scale-50 group-hover:scale-100">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 opacity-0 group-hover:opacity-100 transition-all duration-500">
             <Play className="w-5 h-5 text-white fill-white ml-1" />
           </div>
         )}
@@ -265,7 +265,7 @@ const CreativeGallery = memo(() => {
                   </div>
                 </div>
 
-                <button className="w-full py-4 mt-4 bg-white text-black rounded-xl font-bold text-sm uppercase tracking-wider hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2 group">
+                <button className="w-full py-4 mt-4 bg-white text-black rounded-xl font-bold text-sm uppercase tracking-wider hover:bg-indigo-50 transition-colors flex items-center justify-center gap-3">
                   View Full Project
                   <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                 </button>
