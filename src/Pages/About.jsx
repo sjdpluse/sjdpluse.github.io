@@ -26,7 +26,6 @@ const Header = memo(() => (
     </p>
   </div>
 ));
-
 const ProfileImage = memo(() => (
   <div className="flex justify-end items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
     <div 
