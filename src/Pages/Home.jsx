@@ -184,9 +184,10 @@ const Home = () => {
                 <p className="text-sm sm:text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light mx-auto lg:mx-0 px-2 sm:px-0"
                   data-aos="fade-up"
                   data-aos-delay="1000">
-                  Creating professional visual content for educational institutions,
-                  academic events, and digital media — including graphic design,
-                  photography, videography, and creative video production.
+                  Creating professional academic visual content through graphic design and
+                  media production, enhanced by AI, Vibe Coding, and certified expertise in
+                  computer science and AI-driven education.
+
                 </p>
 
                 {/* Tech Stack */}
