@@ -16,7 +16,6 @@ const FilterTab = ({ label, active, onClick }) => (
     {label}
   </button>
 );
-
 const ProjectCard = memo(({ item, onClick }) => {
   const isVideo = item.media_type === 'video';
   const isFeatured = item.featured; // Featured items span 2 columns
