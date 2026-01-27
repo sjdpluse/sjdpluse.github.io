@@ -14,8 +14,12 @@ import TechStackIcon from "../components/TechStackIcon";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Certificate from "../components/Certificate";
-import { Code, Award, Boxes } from "lucide-react";
 
+// اضافه کنید به وارد کردن های lucide-react:
+import { Code, Award, Boxes, BookOpen } from "lucide-react";
+
+// اضافه کنید به وارد کردن کامپوننت‌ها:
+import CourseCard from "../components/CourseCard";
 
 const ToggleButton = ({ onClick, isShowingMore }) => (
   <button
@@ -132,6 +136,8 @@ export default function FullWidthTabs() {
   const [value, setValue] = useState(0);
   const [projects, setProjects] = useState([]);
   const [certificates, setCertificates] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [showAllCourses, setShowAllCourses] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showAllProjects, setShowAllProjects] = useState(false);
@@ -148,74 +154,78 @@ export default function FullWidthTabs() {
 
 
   const fetchData = useCallback(async (showLoader = true) => {
-    try {
-      if (showLoader) {
-        setLoading(true);
-      }
-      setError(null); // Always reset error
-      // Mengambil data dari Supabase secara paralel
-      const [projectsResponse, certificatesResponse] = await Promise.all([
-        supabase.from("projects").select("*").order('id', { ascending: true }),
-        supabase.from("certificates").select("*").order('id', { ascending: true }), 
-      ]);
-
-      // Error handling untuk setiap request
-      if (projectsResponse.error) throw projectsResponse.error;
-      if (certificatesResponse.error) throw certificatesResponse.error;
-
-      // Supabase mengembalikan data dalam properti 'data'
-      const projectData = projectsResponse.data || [];
-      const certificateData = certificatesResponse.data || [];
-
-      setProjects(projectData);
-      setCertificates(certificateData);
-
-      // Store in localStorage (fungsionalitas ini tetap dipertahankan)
-      localStorage.setItem("projects", JSON.stringify(projectData));
-      localStorage.setItem("certificates", JSON.stringify(certificateData));
-    } catch (error) {
-      const errorMessage = `Error fetching data from Supabase: ${error.message}`;
-      console.error(errorMessage);
-      setError(errorMessage);
-    } finally {
-      if (showLoader) {
-        setLoading(false);
-      }
+  try {
+    if (showLoader) {
+      setLoading(true);
     }
-  }, []);
+    setError(null);
+    
+    // دریافت داده‌ها به صورت موازی
+    const [projectsResponse, certificatesResponse, coursesResponse] = await Promise.all([
+      supabase.from("projects").select("*").order('id', { ascending: true }),
+      supabase.from("certificates").select("*").order('id', { ascending: true }), 
+      supabase.from("courses").select("*").order('id', { ascending: true }), // ← این خط را اضافه کنید
+    ]);
+
+    // بررسی خطاها
+    if (projectsResponse.error) throw projectsResponse.error;
+    if (certificatesResponse.error) throw certificatesResponse.error;
+    if (coursesResponse.error) throw coursesResponse.error; // ← این خط را اضافه کنید
+
+    const projectData = projectsResponse.data || [];
+    const certificateData = certificatesResponse.data || [];
+    const courseData = coursesResponse.data || []; // ← این خط را اضافه کنید
+
+    setProjects(projectData);
+    setCertificates(certificateData);
+    setCourses(courseData); // ← این خط را اضافه کنید
+
+    // ذخیره در localStorage
+    localStorage.setItem("projects", JSON.stringify(projectData));
+    localStorage.setItem("certificates", JSON.stringify(certificateData));
+    localStorage.setItem("courses", JSON.stringify(courseData)); // ← این خط را اضافه کنید
+    
+  } catch (error) {
+    const errorMessage = `Error fetching data from Supabase: ${error.message}`;
+    console.error(errorMessage);
+    setError(errorMessage);
+  } finally {
+    if (showLoader) {
+      setLoading(false);
+    }
+  }
+}, []);
 
 
+useEffect(() => {
+  // همیشه داده‌های تازه را از سرور بگیر
+  fetchData(true);
 
-  useEffect(() => {
-    // Always fetch fresh data from the server on component mount and show the loader.
-    // The data will still be cached for subsequent page loads.
-    fetchData(true);
+  const handleResize = () => {
+    setInitialItems(getInitialItems());
+  };
 
-    const handleResize = () => {
-      setInitialItems(getInitialItems());
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    // Cleanup listener on component unmount
-    return () => window.removeEventListener('resize', handleResize);
-  }, [fetchData, getInitialItems]);
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, [fetchData, getInitialItems]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   const toggleShowMore = useCallback((type) => {
-    if (type === 'projects') {
-      setShowAllProjects(prev => !prev);
-    } else {
-      setShowAllCertificates(prev => !prev);
-    }
-  }, []);
+  if (type === 'projects') {
+    setShowAllProjects(prev => !prev);
+  } else if (type === 'certificates') {
+    setShowAllCertificates(prev => !prev);
+  } else if (type === 'courses') { // ← این بخش را اضافه کنید
+    setShowAllCourses(prev => !prev);
+  }
+}, []);
 
   const displayedProjects = showAllProjects ? projects : projects.slice(0, initialItems);
   const displayedCertificates = showAllCertificates ? certificates : certificates.slice(0, initialItems);
-
+  const displayedCourses = showAllCourses ? courses : courses.slice(0, initialItems);
   return (
     <div className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[#030014] overflow-hidden" id="Portofolio">
       {/* Header section - unchanged */}
@@ -316,9 +326,15 @@ export default function FullWidthTabs() {
               {...a11yProps(1)}
             />
             <Tab
+              icon={<BookOpen className="mb-2 w-5 h-5 transition-all duration-300" />}
+              label="Courses"
+              {...a11yProps(3)}
+            />
+            <Tab
               icon={<Boxes className="mb-2 w-5 h-5 transition-all duration-300" />}
               label="Tech Stack"
               {...a11yProps(2)}
+           
             />
           </Tabs>
         </AppBar>
@@ -355,8 +371,39 @@ export default function FullWidthTabs() {
                 )}
               </>
             )}
+          </TabPanel> 
+          <TabPanel value={value} index={3} dir={theme.direction}>
+            {loading && <p className="text-center text-slate-400 py-10">Loading Courses...</p>}
+            {error && <p className="text-center text-red-500 py-10">{error}</p>}
+            {!loading && !error && courses.length === 0 && <p className="text-center text-slate-400 py-10">No courses found.</p>}
+            {!loading && !error && courses.length > 0 && (
+              <>
+                <div className="container mx-auto flex justify-center items-center overflow-hidden">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
+                    {displayedCourses.map((course, index) => (
+                      <div key={course.id || index} {...getAosProps(index)}>
+                        <CourseCard
+                          imageUrl={course.image_url}
+                          title={course.title}
+                          category={course.category}
+                          sessionDay={course.session_day}
+                          deployedUrl={course.deployed_url}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {courses.length > initialItems && (
+                  <div className="mt-6 w-full flex justify-start">
+                    <ToggleButton
+                      onClick={() => toggleShowMore('courses')}
+                      isShowingMore={showAllCourses}
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </TabPanel>
-
           <TabPanel value={value} index={1} dir={theme.direction}>
             {loading && <p className="text-center text-slate-400 py-10">Loading Certificates...</p>}
             {error && <p className="text-center text-red-500 py-10">{error}</p>}
