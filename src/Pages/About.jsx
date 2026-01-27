@@ -4,6 +4,8 @@ import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, Loader2 } from "l
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { supabase } from "../supabaseClient"; // اتصال به سوپابیس
+
+const CourseSlider = lazy(() => import('../components/CourseSlider'));
 // Memoized Components
 const Header = memo(() => (
   <div className="text-center lg:mb-8 mb-2 px-[5%]">
@@ -278,6 +280,10 @@ const AboutPage = () => {
           </div>
 
           <ProfileImage />
+          {/* Courses Section - Add this before closing div */}
+        <Suspense fallback={<div className="flex justify-center items-center h-64 mt-16"><Loader2 className="w-8 h-8 text-indigo-400 animate-spin" /></div>}>
+          <CourseSlider />
+        </Suspense>
         </div>
 
         <Suspense fallback={<div className="flex justify-center items-center h-64 mt-16"><Loader2 className="w-8 h-8 text-indigo-400 animate-spin" /></div>}>
