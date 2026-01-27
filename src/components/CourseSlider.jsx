@@ -17,6 +17,62 @@ const FilterTab = ({ label, active, onClick }) => (
   </button>
 );
 
+// ToggleButton component
+const ToggleButton = ({ onClick, isShowingMore }) => (
+  <button
+    onClick={onClick}
+    className="
+      px-3 py-1.5
+      text-slate-300 
+      hover:text-white 
+      text-sm 
+      font-medium 
+      transition-all 
+      duration-300 
+      ease-in-out
+      flex 
+      items-center 
+      gap-2
+      bg-white/5 
+      hover:bg-white/10
+      rounded-md
+      border 
+      border-white/10
+      hover:border-white/20
+      backdrop-blur-sm
+      group
+      relative
+      overflow-hidden
+      mt-6
+      w-full
+      justify-center
+    "
+  >
+    <span className="relative z-10 flex items-center gap-2">
+      {isShowingMore ? "See Less" : "Load More"}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`
+          transition-transform 
+          duration-300 
+          ${isShowingMore ? "group-hover:-translate-y-0.5" : "group-hover:translate-y-0.5"}
+        `}
+      >
+        <polyline points={isShowingMore ? "18 15 12 9 6 15" : "6 9 12 15 18 9"}></polyline>
+      </svg>
+    </span>
+    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500/50 transition-all duration-300 group-hover:w-full"></span>
+  </button>
+);
+
 // CourseCard component
 const CourseCard = memo(({ item }) => {
   const handleClick = () => {
@@ -81,20 +137,29 @@ const CourseCard = memo(({ item }) => {
 // Main CourseSlider Component
 const CourseSlider = memo(() => {
   const [courses, setCourses] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('All');
   const [error, setError] = useState(null);
+  const [showAllItems, setShowAllItems] = useState(false);
+  
+  // Get initial items count based on screen size
+  const getInitialItems = useCallback(() => (window.innerWidth < 768 ? 4 : 6), []);
+  const [initialItems, setInitialItems] = useState(getInitialItems());
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
+        setLoading(true);
+        // استفاده از نام جدول `course` به جای `courses`
         const { data, error } = await supabase
-          .from('courses')
+          .from('course')
           .select('*')
           .order('id', { ascending: false });
 
         if (error) throw error;
         setCourses(data || []);
+        setFilteredCourses(data || []);
       } catch (err) {
         console.error("Error fetching courses:", err);
         setError('Failed to load courses. Please check your connection.');
@@ -103,15 +168,24 @@ const CourseSlider = memo(() => {
       }
     };
     fetchCourses();
-  }, []);
+
+    // Update initial items on resize
+    const handleResize = () => {
+      setInitialItems(getInitialItems());
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [getInitialItems]);
 
   // Handle Filtering
-  const filteredCourses = useMemo(() => {
+  useEffect(() => {
     if (activeCategory === 'All') {
-      return courses;
+      setFilteredCourses(courses);
     } else {
-      return courses.filter(item => item.category === activeCategory);
+      setFilteredCourses(courses.filter(item => item.category === activeCategory));
     }
+    // Reset showAll when filter changes
+    setShowAllItems(false);
   }, [activeCategory, courses]);
 
   // Extract unique categories
@@ -119,6 +193,16 @@ const CourseSlider = memo(() => {
     const cats = ['All', ...new Set(courses.map(i => i.category))];
     return cats.slice(0, 5);
   }, [courses]);
+
+  // Calculate displayed items
+  const displayedItems = useMemo(() => {
+    return showAllItems ? filteredCourses : filteredCourses.slice(0, initialItems);
+  }, [filteredCourses, showAllItems, initialItems]);
+
+  // Toggle show more/less
+  const toggleShowMore = useCallback(() => {
+    setShowAllItems(prev => !prev);
+  }, []);
 
   if (loading) {
     return (
@@ -170,16 +254,26 @@ const CourseSlider = memo(() => {
 
       {/* Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-[300px] gap-6" data-aos="fade-up" data-aos-delay="100">
-        {filteredCourses.map((item) => (
+        {displayedItems.map((item) => (
           <CourseCard key={item.id} item={item} />
         ))}
         
-        {filteredCourses.length === 0 && (
+        {displayedItems.length === 0 && (
           <div className="col-span-full py-20 text-center text-gray-500">
             No courses found in this category.
           </div>
         )}
       </div>
+
+      {/* Load More Button */}
+      {!loading && filteredCourses.length > initialItems && (
+        <div className="mt-8 flex justify-center">
+          <ToggleButton
+            onClick={toggleShowMore}
+            isShowingMore={showAllItems}
+          />
+        </div>
+      )}
     </section>
   );
 });
