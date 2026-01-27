@@ -326,15 +326,14 @@ useEffect(() => {
               {...a11yProps(1)}
             />
             <Tab
-              icon={<BookOpen className="mb-2 w-5 h-5 transition-all duration-300" />}
-              label="Courses"
-              {...a11yProps(3)}
-            />
-            <Tab
               icon={<Boxes className="mb-2 w-5 h-5 transition-all duration-300" />}
               label="Tech Stack"
               {...a11yProps(2)}
-           
+            />
+            <Tab
+              icon={<BookOpen className="mb-2 w-5 h-5 transition-all duration-300" />}
+              label="Courses"
+              {...a11yProps(3)}
             />
           </Tabs>
         </AppBar>
