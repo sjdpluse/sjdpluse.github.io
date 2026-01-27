@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, memo } from 'react';
+import React, { useState, useEffect, useMemo, memo, useCallback } from 'react';
 import { supabase } from "../supabaseClient";
-import { Loader2, Play, Maximize2, X, ArrowUpRight, Layers } from 'lucide-react';
+import { Loader2, Play, Maximize2, X, ArrowUpRight, Layers, Calendar } from 'lucide-react';
 
 // --- Sub-components for cleaner code ---
 
@@ -17,9 +17,64 @@ const FilterTab = ({ label, active, onClick }) => (
   </button>
 );
 
+const ToggleButton = ({ onClick, isShowingMore }) => (
+  <button
+    onClick={onClick}
+    className="
+      px-3 py-1.5
+      text-slate-300 
+      hover:text-white 
+      text-sm 
+      font-medium 
+      transition-all 
+      duration-300 
+      ease-in-out
+      flex 
+      items-center 
+      gap-2
+      bg-white/5 
+      hover:bg-white/10
+      rounded-md
+      border 
+      border-white/10
+      hover:border-white/20
+      backdrop-blur-sm
+      group
+      relative
+      overflow-hidden
+      mt-6
+      w-full
+      justify-center
+    "
+  >
+    <span className="relative z-10 flex items-center gap-2">
+      {isShowingMore ? "See Less" : "Load More"}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`
+          transition-transform 
+          duration-300 
+          ${isShowingMore ? "group-hover:-translate-y-0.5" : "group-hover:translate-y-0.5"}
+        `}
+      >
+        <polyline points={isShowingMore ? "18 15 12 9 6 15" : "6 9 12 15 18 9"}></polyline>
+      </svg>
+    </span>
+    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500/50 transition-all duration-300 group-hover:w-full"></span>
+  </button>
+);
+
 const ProjectCard = memo(({ item, onClick }) => {
   const isVideo = item.media_type === 'video';
-  const isFeatured = item.featured; // Featured items span 2 columns
+  const isFeatured = item.featured;
 
   return (
     <div
@@ -108,11 +163,16 @@ const CreativeGallery = memo(() => {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedProject, setSelectedProject] = useState(null);
+  const [showAllItems, setShowAllItems] = useState(false);
+  
+  // Get initial items count based on screen size
+  const getInitialItems = useCallback(() => (window.innerWidth < 768 ? 4 : 6), []);
+  const [initialItems, setInitialItems] = useState(getInitialItems());
 
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
-        // NOTE: Replace 'portfolio_gallery' with your actual table name if different
+        setLoading(true);
         const { data, error } = await supabase
           .from('portfolio_gallery') 
           .select('*')
@@ -123,12 +183,20 @@ const CreativeGallery = memo(() => {
         setFilteredItems(data || []);
       } catch (err) {
         console.error("Error fetching portfolio:", err);
+        setError("Failed to load portfolio items. Please check your connection.");
       } finally {
         setLoading(false);
       }
     };
     fetchPortfolio();
-  }, []);
+
+    // Update initial items on resize
+    const handleResize = () => {
+      setInitialItems(getInitialItems());
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [getInitialItems]);
 
   // Handle Filtering
   useEffect(() => {
@@ -137,13 +205,25 @@ const CreativeGallery = memo(() => {
     } else {
       setFilteredItems(items.filter(item => item.category === activeCategory));
     }
+    // Reset showAll when filter changes
+    setShowAllItems(false);
   }, [activeCategory, items]);
 
   // Extract unique categories
   const categories = useMemo(() => {
     const cats = ['All', ...new Set(items.map(i => i.category))];
-    return cats.slice(0, 5); // Limit to 5 filters max
+    return cats.slice(0, 5);
   }, [items]);
+
+  // Calculate displayed items based on showAll state
+  const displayedItems = useMemo(() => {
+    return showAllItems ? filteredItems : filteredItems.slice(0, initialItems);
+  }, [filteredItems, showAllItems, initialItems]);
+
+  // Toggle show more/less
+  const toggleShowMore = useCallback(() => {
+    setShowAllItems(prev => !prev);
+  }, []);
 
   if (loading) {
     return (
@@ -172,7 +252,7 @@ const CreativeGallery = memo(() => {
           </p>
         </div>
 
-        {/* --- Filter Tabs --- */}
+        {/* Filter Tabs */}
         <div className="flex flex-wrap gap-2 justify-start md:justify-end">
           {categories.map(cat => (
             <FilterTab 
@@ -187,16 +267,26 @@ const CreativeGallery = memo(() => {
 
       {/* --- Bento Grid Layout --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-[300px] gap-6" data-aos="fade-up" data-aos-delay="100">
-        {filteredItems.map((item) => (
+        {displayedItems.map((item) => (
           <ProjectCard key={item.id} item={item} onClick={setSelectedProject} />
         ))}
         
-        {filteredItems.length === 0 && (
+        {displayedItems.length === 0 && (
           <div className="col-span-full py-20 text-center text-gray-500">
             No projects found in this category.
           </div>
         )}
       </div>
+
+      {/* Load More Button */}
+      {!loading && filteredItems.length > initialItems && (
+        <div className="mt-8 flex justify-center">
+          <ToggleButton
+            onClick={toggleShowMore}
+            isShowingMore={showAllItems}
+          />
+        </div>
+      )}
 
       {/* --- Detail Modal (Cinema Mode) --- */}
       {selectedProject && (
@@ -218,7 +308,7 @@ const CreativeGallery = memo(() => {
               <X className="w-5 h-5" />
             </button>
 
-            {/* Media Side (Left/Top) */}
+            {/* Media Side */}
             <div className="w-full md:w-2/3 bg-black flex items-center justify-center relative overflow-hidden group">
               {selectedProject.media_type === 'video' ? (
                 <video 
@@ -236,7 +326,7 @@ const CreativeGallery = memo(() => {
               )}
             </div>
 
-            {/* Info Side (Right/Bottom) */}
+            {/* Info Side */}
             <div className="w-full md:w-1/3 p-8 md:p-10 flex flex-col bg-gray-900/50 backdrop-blur-sm overflow-y-auto custom-scrollbar">
               <div className="mb-6">
                 <span className="text-indigo-400 text-xs font-bold tracking-widest uppercase mb-2 block">
@@ -251,24 +341,21 @@ const CreativeGallery = memo(() => {
               </div>
 
               <div className="mt-auto space-y-6">
-                <div>
-                  <h4 className="text-white text-sm font-semibold mb-3 flex items-center gap-2">
-                    <Maximize2 className="w-4 h-4 text-gray-500" />
-                    Tools Used
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedProject.tools?.map((tool, i) => (
-                      <span key={i} className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-gray-300 text-xs">
-                        {tool}
-                      </span>
-                    ))}
+                {selectedProject.tools && selectedProject.tools.length > 0 && (
+                  <div>
+                    <h4 className="text-white text-sm font-semibold mb-3 flex items-center gap-2">
+                      <Maximize2 className="w-4 h-4 text-gray-500" />
+                      Tools Used
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProject.tools.map((tool, i) => (
+                        <span key={i} className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-gray-300 text-xs">
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-
-                <button className="w-full py-4 mt-4 bg-white text-black rounded-xl font-bold text-sm uppercase tracking-wider hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2 group">
-                  View Full Project
-                  <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                </button>
+                )}
               </div>
             </div>
           </div>
