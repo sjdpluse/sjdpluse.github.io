@@ -281,10 +281,12 @@ const AboutPage = () => {
 
           <ProfileImage />
           {/* Courses Section - Add this before closing div */}
+          
+        </div>
         <Suspense fallback={<div className="flex justify-center items-center h-64 mt-16"><Loader2 className="w-8 h-8 text-indigo-400 animate-spin" /></div>}>
           <CourseSlider />
         </Suspense>
-        </div>
+        
 
         <Suspense fallback={<div className="flex justify-center items-center h-64 mt-16"><Loader2 className="w-8 h-8 text-indigo-400 animate-spin" /></div>}>
           <ImpactfulPeopleSlider />
