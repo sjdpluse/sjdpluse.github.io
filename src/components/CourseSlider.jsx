@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, memo } from 'react';
+import React, { useState, useEffect, useMemo, memo, useCallback } from 'react';
 import { supabase } from "../supabaseClient";
 import { Loader2, Calendar, ExternalLink, Layers } from 'lucide-react';
 import "aos/dist/aos.css";
@@ -151,7 +151,7 @@ const CourseSlider = memo(() => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        // استفاده از نام جدول `course` به جای `courses`
+        // USE 'course' TABLE INSTEAD OF 'courses'
         const { data, error } = await supabase
           .from('course')
           .select('*')
@@ -194,7 +194,7 @@ const CourseSlider = memo(() => {
     return cats.slice(0, 5);
   }, [courses]);
 
-  // Calculate displayed items
+  // Calculate displayed items based on showAll state
   const displayedItems = useMemo(() => {
     return showAllItems ? filteredCourses : filteredCourses.slice(0, initialItems);
   }, [filteredCourses, showAllItems, initialItems]);
